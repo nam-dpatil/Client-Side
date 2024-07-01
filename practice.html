@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form id="form" action="">
+        <input name="name" type="text" placeholder="name">
+        <input name="email" type="email" placeholder="email">
+        <input name="role" type="text" placeholder="role">
+        <input name="hire-date" type="date" placeholder="hire-date">
+        <input name="salary" type="number" placeholder="salary">
+    </form>
+    <script>
+        const inputs = document.querySelectorAll('input')
+        inputs.forEach(input => {
+            input.addEventListener('keypress', (event) => {
+                event.preventDefault()
+                console.log("entered");
+                if(event.key === 'Enter') {
+                    sendData();
+                }
+            })
+        })
+
+        const sendData = () => {
+            const url = "http://localhost:8080/";
+
+            const inputsData = document.getElementById('form')
+            const formData = new FormData(inputsData);
+
+            let data = { };
+            formData.forEach((value, key) => {
+                data[key] = value
+            });
+            console.log(data);
+        }
+       
+    </script>
+
+</body>
+</html>
