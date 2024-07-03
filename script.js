@@ -1,131 +1,69 @@
-// let formData = document.querySelector(".form")
-// formData.addEventListener("keypress", (event) => {
-//     if (event.key === "Enter"){
-//         event.preventDefault();
-//         let resFormData = new FormData(formData)
-//         let data = Object.fromEntries(resFormData)
-//         console.log(data);
-//         fetch()
-//     }
-// })
-
-
-// const url = "http://localhost:8080/";
-
-// const getApi = async () => {
-//     console.log("getting data....");
-//     let response = await fetch(URL)
-//     console.log(response);
-//     let data = await response.json();
-//     console.log(data);
-//     return data;
-// };
-
-// let inputClick = document.querySelectorAll('.inputs')
-// inputClick.addEventListener("keypress", (event) => {
-//     event.preventDefault();
-//     console.log("enter button working");
-//     if(event.key === "Enter"){
-//         console.log("enter button working");
-
-//     }
-// })
-
-
-// inputClick.forEach(element => {
-//     element.addEventListener("keypress", (event) => {
-//         event.preventDefault();
-//         console.log("enter button working");
-//         if(event.key === "Enter"){
-//             console.log("enter button working");
-    
-//         }
-//     })
-// });
-
-// const data = {
-
-//     "name": "A",
-//     "email": "john.doe@example.com",
-//     "title": "Software Engineer",
-//     "hireDate": null,
-//     "salary": 75000.0,
-//     "payment": false
-//   }
-// const postData = async (url, data) => {
-//     try {
-        
-//       const response = await fetch(url, {
-//         method: 'POST',
-//         headers: {
-//             'Content-Type': 'application/json'
-//         },
-//         body: JSON.stringify(data)
-//     });
-//       console.log(response.status);
-//       if (!response.ok) {
-//         throw new Error(`HTTP error! Status: ${response.status}`);
-//         }
-//         const result = await response.json();
-//         console.log('Success:', result);
-//     }
-//     catch (error) {
-//       console.error('Error:', error.message);
-//     }
-//   }
-
-//   postData(url, data);
-
-// document.addEventListener('DOMContentLoaded', function () {
-//     const form = document.getElementById('employeeForm');
-//     const inputs = form.querySelectorAll('input');
-
-//     inputs.forEach(input => {
-//         input.addEventListener('keypress', function (event) {
-//             if (event.key === 'Enter') {
-//                 event.preventDefault();
-//                 sendData();
-//             }
-//         });
-//     });
-// });
-
-// async function sendData() {
-//     console.log("it is calling");
-//     const url = 'http://localhost:8080/';
-//     const form = document.getElementById('employeeForm');
-//     const formData = new FormData(form);
-
-//     let data = {};
-//     formData.forEach((value, key) => {
-//         console.log("form data Key and value :" + key + value);
-//         data[key] = value;
-//     });
-//     console.log("final data object : "+data);
-    // try {
-    //     const response = await fetch(url, {
-    //         method: 'POST',
-    //         headers: {
-    //             'Content-Type': 'application/json'
-    //         },
-    //         body: JSON.stringify(data)
-    //     });
-
-    //     if (!response.ok) {
-    //         throw new Error(`HTTP error! Status: ${response.status}`);
-    //     }
-
-    //     const result = await response.json();
-    //     console.log('Success:', result);
-    // } catch (error) {
-    //     console.error('Error:', error);
-    // }
-// }
 
 const url = "http://localhost:8080/";
 
+const dataTableRow = document.querySelectorAll('#data-tr')
+
+let r = {
+    "name": "A",
+    "email": "john.doe@example.com",
+    "title": "Software Engineer",
+    "hireDate": null,
+    "salary": 100,
+    "payment": false
+}
+
+// ----------------------- Get Api --------------------------
+
+// getAPI resquest 
+const getApi = async () => {
+    console.log("getting data....");
+    let response = await fetch(url);
+    if (!response.ok) {
+        throw new Error('Network response was not ok');
+    }
+    let data = await response.json();
+    return data;
+};
+
+const createElement = (values, rowIndex) => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+        <th class="id-num" scope="row">${rowIndex}</th>
+        <td class="td">${values.name}</td>
+        <td class="td">${values.email}</td>
+        <td class="td">${values.title}</td>
+        <td class="td">${values.hireDate || ''}</td>
+        <td class="td">${values.salary || ''}</td>
+        <td><button type="button" class="btn btn-success" id="payment-button">Payment</button></td>
+        <td><button type="button" class="btn btn-danger" id="payment-Update">Update</button></td>
+        <td><button type="button" class="btn btn-warning" id="payment-Delete">Delete</button></td>
+    `;
+    return tr;
+};
+
+let tableRow;
+const createRowsFromDB = async () => {
+    try {
+        const response = await getApi();
+        const tbody = document.getElementById('table-body');
+        let rowIndex = 1;
+
+        response.forEach((element) => {
+            tableRow = createElement(element, element.id);
+            tbody.insertBefore(tableRow, tbody.firstChild); // Insert the new row at the beginning
+        });
+    } catch (error) {
+        console.error('There has been a problem with your fetch operation:', error);
+    }
+};
+
+document.addEventListener('DOMContentLoaded', createRowsFromDB);
+
+
+
 // event handler for enter key press on input tag
-const inputs = document.querySelectorAll('input')
+const inputs = document.querySelectorAll('#data-tr .td')
+console.log(inputs);
 inputs.forEach(input => {
     input.addEventListener('keypress', async (event) => {
         // event.preventDefault()
@@ -133,15 +71,8 @@ inputs.forEach(input => {
         if(event.key === 'Enter') {
             const result = data()
             var read = await sendData(result);
-            let r = {
-                "name": "A",
-                "email": "john.doe@example.com",
-                "title": "Software Engineer",
-                "hireDate": null,
-                "payment": false
-            }
-            console.log("------------------------------");
             reflectData(read)
+            // tem()
         }
     })
 })
@@ -175,7 +106,6 @@ try {
     }
 
     const result = await response.json();
-    console.log('Success:', result);
     return result;
 } catch (error) {
     console.error('Error:', error);
@@ -184,26 +114,25 @@ try {
 
 // reflect data on rows
 const reflectData = (result) => {
-    console.log(Object.keys(result));
-    console.log(Object.values(result)[0]);
+    // createElement()
     const tds = document.querySelectorAll('.td')
     let index = 1;
     tds.forEach((td) => {
         td.innerHTML = Object.values(result)[index++];
     })
+}
 
-    // console.log(tds[0]);
-    // console.log(tds[1].getAttribute('name'));
-    tds.forEach(td => {
-        
+// ---------------------Delete employee data by id---------------------------
+
+let tableData =  document.querySelectorAll('.id-num')
+
+console.log("table dat"+tableData.forEach((data) => {
+    console.log(data);
+}));
+let id = tableData.id;
+tableData.forEach((data) => {
+    data.addEventListener('onClick', (event) => {
+        const url = "http://localhost:8080/";
+
     })
-}
- let r = {
-    "name": "A",
-    "email": "john.doe@example.com",
-    "title": "Software Engineer",
-    "hireDate": null,
-    "payment": false
-}
-// reflectData(r)
-
+})
